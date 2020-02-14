@@ -1,3 +1,5 @@
+#Problema 2
+#Ejercicios iniciales
 raiz <- function(N){
   x = 0.1
   E = exp(-8)
