@@ -14,6 +14,20 @@ taylor <- function(x, gradoP){
   print(resReal,16)
   cat("El resultado aproximado con Taylor es igual a: \n")
   print(resAprox,16)
-  cat("El error relativo es de: ",errorRelativo, " con ",iteraciones," iteraciones")
+  cat("El error relativo es de: \n")
+  print(errorRelativo,8)
+  cat(" Iteraciones: ",iteraciones," iteraciones")
+  return(errorRelativo)
 }
-taylor(-pi/128,9)
+x <- seq(1:10)
+errorRelativo <- c()
+for (i in 1:10){
+  errorRelativo <- c(errorRelativo,taylor(pi/128,i))
+}
+print(errorRelativo)
+plot(x,errorRelativo)
+f <- function(x) sin(x)
+g <- function(x) sin(pi/128)+(cos(pi/128)/fact(1))*(x-pi/128) - (sin(pi/128)/fact(2))*(x-pi/128)^2 -(cos(pi/128)*fact(3))*(x-pi/128)^3+(sin(pi/128)*fact(4))*(x-pi/128)^4
+plot(f,xlim = c(-2,2), ylim=c(-1,1),ylab = "Y" )
+par(new = TRUE)
+plot(g,xlim = c(-2,2),col= "blue",ylim=c(-1,1),ylab = "Y")

@@ -1,16 +1,12 @@
 #Problema 1
 #Método de Horner para derivadas en x0
 #Polinomio: 2X⁴-3X²+3X-4
-require(pracma)
 #Función de Horner para evaluar un polinomio
 horner <- function(x0,poli){
   res = 0
-  error <- c()
   for(i in 1:length(poli)){
     res = res*x0 + poli[i]
   }
-  print(error)
-  cat("El resultado del polinomio evaluado en X =",x0,"es igual a: ",res,"\n")
   return(res)
 }
 #Función que deriva un polinomio  
@@ -21,13 +17,17 @@ derivar_Polinomio <- function(poli){
   }
   return(derivada)
 }
-f <- function(x) 2*x^4-3*x^2+3*x+4 
+f <- function(x) 2*x^4-3*x^2+3*x+4
+g <- function(x) 8*x^3-6*x+3
+plot(f,xlim = c(-5,5), ylim=c(0,20),ylab = "Y" )
+par(new = TRUE)
+plot(g,xlim = c(-5,5),col= "blue",ylim=c(0,20),ylab = "Y")
 #Principal
 poli <- c(2,0,-3,3,-4)
 derivada_poli <- derivar_Polinomio(poli)
-calculo<-horner(5*pi,derivada_poli)
+calculo<-horner(pi/14,derivada_poli)
 print(calculo,16)
 #Numero complejos
-n1 <- complex(real = 3, imaginary = sqrt(2))
+n1 <- complex(real = exp(1), imaginary = sqrt(3))
 calculoComplejo<-horner(n1,derivada_poli)
 print(calculoComplejo,16)
