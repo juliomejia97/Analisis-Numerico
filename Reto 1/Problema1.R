@@ -5,9 +5,11 @@ require(pracma)
 #Función de Horner para evaluar un polinomio
 horner <- function(x0,poli){
   res = 0
+  error <- c()
   for(i in 1:length(poli)){
     res = res*x0 + poli[i]
   }
+  print(error)
   cat("El resultado del polinomio evaluado en X =",x0,"es igual a: ",res,"\n")
   return(res)
 }
@@ -21,10 +23,11 @@ derivar_Polinomio <- function(poli){
 }
 f <- function(x) 2*x^4-3*x^2+3*x+4 
 #Principal
-.Machine$double.eps
 poli <- c(2,0,-3,3,-4)
 derivada_poli <- derivar_Polinomio(poli)
 calculo<-horner(5*pi,derivada_poli)
 print(calculo,16)
-teorico <- fderiv(f, 5*pi) # 1ra derivada
-print(teorico,16)
+#Numero complejos
+n1 <- complex(real = 3, imaginary = sqrt(2))
+calculoComplejo<-horner(n1,derivada_poli)
+print(calculoComplejo,16)
