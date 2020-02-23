@@ -47,6 +47,8 @@ relat <- function (puntos) (absol(puntos) / poli(puntos))*100
 
 ErrorAbsol <- c(absol(pi/64), absol(pi/100),absol(pi/128),absol(pi/256),absol(pi/360),absol(pi/512))
 plot(ErrorAbsol,col= "blue")
+PromErrorAbs = mean(ErrorAbsol)
 
 ErrorRela <- c(relat(pi/64),relat(pi/100),relat(pi/128),relat(pi/256),relat(pi/360),relat(pi/512))
 plot(ErrorRela,col = "green")
+PromErrorRela = mean(ErrorRela)
