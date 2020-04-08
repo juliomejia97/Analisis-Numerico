@@ -1,0 +1,274 @@
+---
+title: "AnÃ¡lisis Numericos Eddy Herrera Daza"
+subtitle: Sistemas de Ecuaciones MÃ©todos Iterativos
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+##Ejercicios
+Instalar las librerias:
+```{r}
+library(pracma)
+library(Matrix)
+```
+**Pracma** Proporciona una gran cantidad de funciones de análisis numérico y álgebra lineal, optimización numérica, ecuaciones diferenciales, series de tiempo  **matrix** Diversos tipos de matrices, operaciones y algoritmos relacionados    
+
+Las siguientes funciones sirven para crear(generar) matrices básicas. Los argumentos son n,m. Donde, son escalares numéricos que especifican el tamaño de la matriz. Por defecto si sólo se introduceel valor de n, se asume cuadrada la matriz
+  
+```{r,echo=T}
+
+n=2#dimensión de la matriz
+D1<-eye(n, m = n)#matriz aii=1 y aij=0
+D2<-ones(n, m = n)#matriz aij=1
+D3<-zeros(n, m = n)#matriz aij=0
+print("D1")
+print(D1)
+print("D2")
+print(D2)
+print("D3")
+print(D3)
+4*D1#matriz donde aii=4 y aij=0
+```
+b. Evalue la matriz de transición para el métodos:   
+## Jacobi  
+Primero crear la matriz A, para el sistema de la forma $AX=B$
+```{r}
+A = matrix(c(8, 9, 2, 2, 7, 2,
+2, 8, 6), nrow=3, byrow=TRUE)
+A
+b = c(69, 47,68)
+b
+det(A)#verificar que el sistema tenga solución
+solve(A,b)
+```
+Como podemos observar el sistema tiene solución, dado que su determinante es diferente de cero.Y su solución es:$x_{1}=2;x_{2}=5;x_{3}=4$   
+Entonces, para determinar si el método de Jacobi converge es necesario hallar la mátriz de transición($T_{J}$).  
+Primero podemos crear una función que dada una matriz M retorne en una matriz diagonal
+```{r}
+diagonal1 <- function(M) {
+  
+  M[col(M)!=row(M)] <- 0
+  
+  return(M)
+}
+diagonal1(A)
+```
+La otra opción es utilizar la funcionalidad de las librerias que retornan una matriz diagonal. Posteriormente, la matriz asociada al sistema $A$ se descompone en: $A=L+U+D$:
+```{r}
+D = diagonal1(A)
+D
+L = tril(A,k=-1,diag = FALSE)
+L
+U = triu(A,k=1,diag = FALSE)
+U
+D+L+U#verificación retorna A
+```
+Luego la matriz de transición para el caso del métdodo de Jacobi esta dada por:$T_{J}=D^{-1}*(L+U)$
+```{r}
+TJ = (-solve(D))%*%(L+U)
+TJ
+```
+La pregunta ahora a resolver es que este sistema al aplicarle un metodo iterativo converge la solución. Para ésto aplicamos el teorema de convergencia (5.1):
+```{r}
+print("Norma")
+print(norm(TJ,"I"))
+```
+Como podemos ver la norma es mayor que uno ||T||>1 entonces, la convergencia del método de Jacobi **no se puede asegurar**
+
+```{r}
+
+propios <- function(matriz) {
+  a <- eigen(matriz)#utilizar la funcion eigen
+  names(a$values) <- 1:length(a$values)#genera valores
+  names(a) <- c("valores","vectores")
+  colnames(a$vectores) <- 1:nrow(a$vectores)
+  a
+}
+
+```
+Ahora hay que tener en cuenta que la salida es una lista. La vamos aplicar sobre la matriz de transisición y verificar si el método de Jacobi realmente no converge. Para esto utilizamos el radio espectral $$p(\alpha)$$ 
+si el maximo valor de sus valores absolutos son menores que uno entonces, el método de jacobi converge
+```{r}
+y <- TJ
+propios(matriz=y) # O simplemente:
+propios(y) 
+```
+Como se puede observar los valores absolutos de los valores propios que es:radio espectral=0.9945840<1. Por lo tanto, el método de Jcobi converje. No obstante, como radio espectral es muy cercano a 1, se tiene que se necesitarán varias iteraciones para resolverlo por este método. Supongase que tiene tolerancia de epsilon de la maquina
+```{r}
+Solucion_J<-itersolve(A,b,nmax=3000,
+                      tol =.Machine$double.eps^(0.3125)
+                      ,method = "Jacobi" )
+Solucion_J
+```
+Como se puede observar la solución es aproximada a la solución exacta, pero es necesaria 2084 iteraciones para obtener una aprociamación con la tolerancia deseada, lo que demuestra lo ineficiente del método de Jacobi cuando el radio espectral es muy cercano a 1.
+## Método de Gauss_Seidel  
+Para el caso del método de Gauss_Seidel esta dada por:  
+$T_{gs}=(I+D^{-1}L)^{-1}(-D^{-1}U)$  
+```{r}
+C = matrix(c(4,-1,-1,-1,-1,4,-1,-1,-1,
+             -1,4,-1,-1,-1,-1,4), nrow=4, byrow=TRUE)
+C
+z = c(69, 47,68,11)
+det(C)#verificar que el sistema tenga solución
+solve(C,z)
+```
+
+Se va aplicar para el sistema asociado $CX=z$, para esto 
+Para el caso del método de Gauss_Seidel esta dada por:  
+$T_{gs}=(I+D^{-1}L)^{-1}(-D^{-1}U)$. Luego primero los valores propios y luego el radio espectral
+```{r}
+n=4#dimensión de la matriz
+Ig<-eye(n, m = n)
+Dg = diagonal1(C)
+Lg = tril(C,k=-1,diag = FALSE)
+Ug = triu(C,k=1,diag = FALSE)
+W=(Ig+(solve(Dg)%*%Lg))
+H=solve(W)
+N=(-solve(Dg))%*%(Ug)
+TG<- H%*%N
+TG#matriz de transisción
+
+```
+
+Luego la matriz de tolerancia esta dada porTG y sus valores propiosestan a continuación y el radio espectral esta dado por 0.56994495, lo que indica que el método converje
+```{r}
+y <- TG
+propios(y) 
+```
+Al aplicar el métdo utilizando las iteraciones de Gauss_seidel
+```{r}
+Solucion_G<-itersolve(C,z,nmax=3000,
+                      tol =.Machine$double.eps^(0.3125)
+                      ,method = "Gauss-Seidel" )
+Solucion_G
+```
+Como se puede ver fueron necesarias 21 iteraciones utilizando el métod de Gauss-Seidel.  
+## Método SOR  
+En este método la $$T=-D^{-1}(L+U)$$
+```{r}
+w=1.2
+S=(solve((Dg+w*Lg)))
+Tsor<- S%*%((1-w)*Dg-w*Ug)
+propios(Tsor)
+```
+como se ve el radio espectral para este caso es 0.3312377<1. Luego se va determinar la aproximación a la solución utilizando los tres métodos para comparar el número de iteraciones
+```{r}
+library(Rlinsolve)
+```
+Con la librería Rlinsolve para determinar la solución por SOR
+```{r}
+solucion_sor<- lsolve.sor(C,z,reltol = .Machine$double.eps^(0.3125),w=1.2)
+solucion_sor
+solve(C,z)
+```
+Como se puede observar se necesitan 11 interaciones para obtener la aproximación a la solución del sistema.
+
+a. Pruebe el siguiente algoritmo con una matriz $A_{3}$, modifiquelo para que $a_{ii}=0$ para todo $i$
+```{r, echo=T}
+tril1 <- function(M, k = 0) {
+if (k == 0) {
+M[upper.tri(M, diag = FALSE)] <- 0
+} else {
+M[col(M) >= row(M) + k + 1] <- 0
+}
+return(M)
+}
+tril1(C)#aplicada sobre la matriz C
+```
+Dado el siguiente sistema:
+
+$$2x-z=1$$                                                                                  
+$$\beta x+2y-z=2$$  
+$$-x+y+\alpha z=1$$    
+
+El valor de $\alpha$ y $\beta$ para asegura la convergencia por el método de Jacobi: Si la matriz del sistema original es diagonalmente dominante, seguro converge por metodo de Jacobi.La matriz diagonalmente dominante se denomina como aquella matriz en la cual cada valor de su diagonal debe ser mayor que la suma de los otros coeficientes de la fila en la que se encuentra el valor. En este caso beta debe ser:  
+$$|\beta|>|-1|+|2|$$
+$$\alpha>|-1|+|1|$$
+
+```{r}
+beta = 4
+alpha = 3
+
+A = matrix(c(2, 0, -1,
+             beta,2 , -1,
+             -1, 1, alpha), nrow=3, byrow=TRUE)
+B = matrix (c(1,2,1),nrow=3, byrow=TRUE)
+Ab = cbind(A,B)
+print(Ab)
+solve(A,b)
+```
+
+Genere una tabla que tenga 10 iteraciones del método de Jacobi con vector inicial $x_{0}=[1,2,3]^t$  
+```{r}
+x = 0
+y = 0
+z = 0
+
+diag1 <- function(M) {
+  
+  M[col(M)!=row(M)] <- 0
+  
+  return(M)
+}
+
+jacobiPr2 <- function(A,B, x0, tol){
+  x_k = matrix(x0)
+  
+  D = diag1(A)
+  L = tril(A,k=-1,diag = FALSE)
+  U = triu(A,k=1,diag = FALSE)
+  
+  it = 1
+  repeat
+  {
+    inn = matrix(B-((L+U)%*%x_k))
+    D1 = (solve(D))
+    xk1 = D1%*%inn
+    cat("Error ",it," ",norm(xk1-x_k,"F")/norm(x_k),"\n")
+    x_k = xk1
+    
+    x[[it]] = x_k[1]
+    y[[it]] = x_k[2]
+    z[[it]] = x_k[3]
+    cat("Solucion iteracion ",it,": ",x[[it]]," ",y[[it]]," ",z[[it]],"\n")
+    it = it + 1
+    
+    if(it == tol)
+      break
+  }
+  
+  cat("Solucion a ", tol ," iteraciones: ",x_k,"\n")
+}
+
+x1 = c(1,2,3)
+jacobiPr2(A, B, x1, 10)
+Solucion_J2<-itersolve(A,b=B,x0=x1,nmax=1000,
+                       tol = 1e-8,method = "Jacobi" )
+Solucion_J2
+```
+
+### Solución de un sistema No lineal
+Determinar numéricamente la intersección entre la circunferencia $x^2 + y^2 = 1$ y la recta $y = x$. Usamos una aproximación inicial $(1,1)$. Utilice el pauqte BB y  la función BBsolve() del paquete,grafique la solución
+```{r}
+library(BB)
+ecuaciones = function(x) {
+  n = length(x)
+  F = rep(NA, n)
+  F[1] = x[1] - x[2]
+  F[2] = x[1]^2 + x[2]^2 -1
+  F
+}
+p0 = c(1,1)
+sol = BBsolve(par = p0, fn=ecuaciones)
+sol$par
+funcion1 <- function(x) sqrt(1 - x^2)
+funcion2 <- function(x) x
+matplot(x,cbind(funcion1(x),funcion2(x)),col=c("blue","red"))          
+plot(sol$par)
+sol$par
+
+
+```
+
