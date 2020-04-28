@@ -22,21 +22,6 @@ def Area_mortero():
   area = Area_halfsphere(1.00) + 4 * Area_pyramid(0.30)
   return area
 
-#Procedimientos para el volumen superficial
-def Volume_halfsphere(r):
-  volume = (4/3 * math.pi * r**3)/2
-  return(volume)
-
-def Volume_pyramid(l):
-  h = (l**2+(l/2)**2)**(1/2)
-  b = l*l/2
-  volume = 1/3 * b * h
-  return(volume)
-
-def Volume_mortero():
-  volume = (Volume_pyramid(0.30) -  Volume_pyramid(0.29)) * 4 + (Volume_halfsphere(1.00) - Volume_halfsphere(0.99))
-  return(volume)
-
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
