@@ -1,0 +1,11 @@
+f <- function(x) 4 + cos(x+1)
+g <- function(x) exp(x)*sin(x)
+h <- function(x) 4 + cos(x+1) - exp(x)*sin(x)
+a <- function(x) exp(x)*sin(x) - 4 - cos(x+1)
+curve(f,from=0,to=4,ylim = c(0, 9),col="green")
+curve(g,from=0,to=4,add = TRUE,col="red")
+p1<-secant(h,0,2,tol=10^-5)
+p2<-secant(h,4,6,tol=10^-5)
+Lq <- legendre.quadrature.rules(51)[[51]]
+legendre.quadrature(a,Lq,lower = p1$root,upper = p2$root)
+integrate(a,p1$root,p2$root,abs.tol = 10^-5)
