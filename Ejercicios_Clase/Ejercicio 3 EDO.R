@@ -1,0 +1,49 @@
+## Método de Euler
+euler <- function(f, h, x0, y0, xfinal) {
+  N = (xfinal - x0) / h #Número de particiones
+  x = y = numeric(N + 1) #Dimensionar el arreglo 
+  x[1] = x0; y[1] = y0
+  i = 1
+  #Llenar los vectores
+  while (i <= N) {
+    x[i + 1] = x[i] + h #xi=xi-1
+    y[i + 1] = y[i] + h * f(x[i], y[i]) #yi=yi-1 + h*f(xi-1,yi-1)
+    i = i + 1
+  }
+  return (data.frame(X = x, Y = y))
+}
+##Método de Taylor
+mtaylor4= function(f, t0, y0, h, n){
+  #Datos igualmente espaciados iniciando en t0 = a, paso h. "n" datos
+  t = seq(t0, t0 + (n-1)*h, by = h) # n datos
+  y = rep(NA, times=n) # n datos
+  y[1] = y0
+  # Derivadas parciales con el paquete Deriv. Deriv(f)
+  ft=Deriv(f,"t"); fy=Deriv(f,"y")
+  f1 = function(t,y)
+    ft(t,y)+fy(t,y)*f(t,y)
+  f1t=Deriv(f1,"t"); f1y=Deriv(f1,"y")
+  f2= function(t,y) f1t(t,y)+f1y(t,y)*f(t,y)
+  f2t=Deriv(f2,"t"); f2y=Deriv(f2,"y")
+  f3= function(t,y) f2t(t,y)+f2y(t,y)*f(t,y) # orden m = 4
+  for(i in 2:n ){
+    f0i = f(t[i-1], y[i-1])
+    f1i = f1(t[i-1], y[i-1])
+    f2i = f2(t[i-1], y[i-1])
+    f3i = f2(t[i-1], y[i-1])
+    y[i] = y[i-1] + h*(f0i + h/2*f1i + h^2/6*f2i + h^3/24*f3i )
+  }
+  print(cbind(t,y)) #imprimir
+  plot(t,y, pch=19, col="red",cex = 2) #gráfica
+}
+f <- function(t,y) {exp(-t^2)}
+e1 <- euler(f,h=0.1,x0=0,y0=1,xfinal=0.2)
+e1
+plot(e1)
+#Runge
+runge1<- rk4(f,b = 0.2,y0 = 1,a=0,n=(0.2)/0.1)
+runge1
+plot(runge)
+#Taylor
+t0 = 0; y0 = 1; h = 0.1; n=3
+mtaylor4(f, t0, y0, h, n)
