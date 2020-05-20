@@ -3,7 +3,7 @@ library (phaseR)
 library (pracma)
 N = 2000
 #Tiempo simulación
-tf = 110
+tf = 107
 
 #estado inicial de los compartimentos
 init <- c(S = 5 , # Suceptibles ->>  input$suceptiblesInicialesSI
@@ -11,15 +11,16 @@ init <- c(S = 5 , # Suceptibles ->>  input$suceptiblesInicialesSI
 
 #parametros del modelo (coeficientes de las variables)
 param <- c( beta = 0.49 , # Tasa de infeccion ( contagiados por unidad de tiempo) 
-            gamma = 0.34 ) # Tasa de recuperados
+            gamma = 0.34 ,
+            miu = 0.20) # Tasa de recuperados
 #crear la funcion con las ODE
 sis <- function(times, init, param) 
 {
   with(as.list(c(init, param)), 
        {
          #ecuaciones diferenciales   
-         dS <- -gamma*S*I + beta*I
-         dI <- gamma*S*I - beta*I
+         dS <- -gamma*S*I/ (N+miu*I)
+         dI <- gamma*S*I / (N-miu*I)
          #resultados de las tasas de cambio   
          return(list(c(dS, dI)))
        })
