@@ -6,7 +6,7 @@ library (deSolve)
 library (phaseR)
 library (pracma)
 library(readr)
-Datos <- read_delim("Analisis-Numerico/Reto3/Datos.csv", 
+Datos <- read_delim(file="Datos.csv", 
                     ";", escape_double = FALSE, locale = locale(decimal_mark = ",", 
                                                                 grouping_mark = "."), trim_ws = TRUE)
 
@@ -58,11 +58,11 @@ TabSI <- fluidRow(
     ),
     tabPanel("Pendientes",
              width = 350,
-             plotOutput("plotM1PendSI", height = 250, width = 400)
+             plotOutput("plotM1PendSI", height = 350, width = 400)
     ),
     tabPanel("Error",
              width = 350,
-             plotOutput("plotM1ErrorSI", height = 250, width = 500)
+             plotOutput("plotM1ErrorSI", height = 350, width = 500)
     )
   ),
   
@@ -71,19 +71,19 @@ TabSI <- fluidRow(
     title = "Metodo 2",
     width = 8,
     # The id lets us use input$tabset1 on the server to find the current tab
-    id = "tabGraficasM1SI", height = "300px",
+    id = "tabGraficasM1SI", height = "400px",
     tabPanel("Modelo",
-             width= 200,
-             plotOutput("plotM2SI", height = 200)
+             width= 350,
+             plotOutput("plotM2SI", height = 350)
              
     ),
     tabPanel("Pendientes",
-             width = 200,
-             plotOutput("plotM2PendSI", height = 250, width = 400)
+             width = 350,
+             plotOutput("plotM2PendSI", height = 350, width = 400)
     ),
     tabPanel("Error",
-             width = 200,
-             plotOutput("plotM2ErrorSI", height = 250, width = 500)
+             width = 350,
+             plotOutput("plotM2ErrorSI", height = 350, width = 500)
     )
   )
   
@@ -107,18 +107,18 @@ TabSIR <- fluidRow(
     title = "Metodo 1",
     width = 8,
     # The id lets us use input$tabset1 on the server to find the current tab
-    id = "tabGraficasM1SIR", height = "300px",
+    id = "tabGraficasM1SIR", height = "400px",
     tabPanel("Modelo",
-             width= 200,
-             plotOutput("plotM1SIR", height = 200)
+             width= 350,
+             plotOutput("plotM1SIR", height = 350)
     ),
     tabPanel("Pendientes",
-             width = 200,
-             plotOutput("plotM1PendSIR", height = 250, width = 400)
+             width = 350,
+             plotOutput("plotM1PendSIR", height = 350, width = 400)
     ),
     tabPanel("Error",
-             width = 200,
-             plotOutput("plotM1ErrorSIR", height = 250, width = 500)
+             width = 350,
+             plotOutput("plotM1ErrorSIR", height = 350, width = 500)
     )
   ),
   
@@ -126,17 +126,17 @@ TabSIR <- fluidRow(
     
     title = "Metodo 2",
     width = 8,
-    id = "tabGraficasM2SIR", height = "300px",
+    id = "tabGraficasM2SIR", height = "400px",
     tabPanel("Modelo",
-             width= 200,
-             plotOutput("plotM2SIR", height = 200)
+             width= 350,
+             plotOutput("plotM2SIR", height = 350)
     ),
     tabPanel("Pendientes",
-             width = 200,
+             width = 350,
              plotOutput("plotM2PendSIR", height = 250, width = 400)
     ),
     tabPanel("Error",
-             width = 200,
+             width = 350,
              plotOutput("plotM2ErrorSIR", height = 250, width = 500)
     )
   )
@@ -158,18 +158,18 @@ TabSIS <- fluidRow(
     title = "Metodo 1",
     width = 8,
     # The id lets us use input$tabset1 on the server to find the current tab
-    id = "tabGraficasM1SIS", height = "300px",
+    id = "tabGraficasM1SIS", height = "400px",
     tabPanel("Modelo",
-             width= 200,
-             plotOutput("plotM1SIS", height = 200)
+             width= 350,
+             plotOutput("plotM1SIS", height = 350)
     ),
     tabPanel("Pendientes",
-             width = 200,
-             plotOutput("plotM1PendSIS", height = 250, width = 400)
+             width = 350,
+             plotOutput("plotM1PendSIS", height = 350, width = 400)
     ),
     tabPanel("Error",
-             width = 200,
-             plotOutput("plotM1ErrorSIS", height = 250, width = 500)
+             width = 350,
+             plotOutput("plotM1ErrorSIS", height = 350, width = 500)
     )
   ),
   
@@ -177,18 +177,18 @@ TabSIS <- fluidRow(
     
     title = "Metodo 2",
     width = 8,
-    id = "tabGraficasM2SIS", height = "300px",
+    id = "tabGraficasM2SIS", height = "400px",
     tabPanel("Modelo",
-             width= 200,
-             plotOutput("plotM2SIS", height = 200)
+             width= 350,
+             plotOutput("plotM2SIS", height = 350)
     ),
     tabPanel("Pendientes",
-             width = 200,
-             plotOutput("plotM2PendSIS", height = 250, width = 400)
+             width = 350,
+             plotOutput("plotM2PendSIS", height = 350, width = 400)
     ),
     tabPanel("Error",
-             width = 200,
-             plotOutput("plotM2ErrorSIS", height = 250, width = 500)
+             width = 350,
+             plotOutput("plotM2ErrorSIS", height = 350, width = 500)
     )
   )
 )
@@ -240,7 +240,7 @@ server <- function (input, output,session)
     errorM2SI <- c()
     output$plotM1SI <- renderPlot({
       N <- sum(init)
-     
+      
       
       #Calculamos el tamanio de la poblacion
       updateTextInput(session, "poblacionInicialSI", value =N)
@@ -269,7 +269,7 @@ server <- function (input, output,session)
       
       ##errorM1SI<- c(0)
       for(i in 1:input$tiempoLimiteSI){
-
+        
         errorM1SI<- c(errorM1SI,(abs(Datos$`Cum. cases`[i]- simulacionM1SI.si$I[i])/Datos$`Cum. cases`[i])/100000)
         
       }
@@ -347,15 +347,15 @@ server <- function (input, output,session)
     errorM1SIR <- c()
     errorM2SIR <- c()
     output$plotM1SIR <- renderPlot({
-    N <- sum(init)
-    print(simulacionM1SIR.sir)
-    #Calculamos el tamanio de la poblacion
-    updateTextInput(session, "poblacionInicialSIR", value =N)
-    #Representamos graficamente los resultados obtenidos
-    plot(times, simulacionM1SIR.sir$S, type="l", col="blue", ylim=c(0,sum(init)), xlab="Tiempo (en dias)", ylab="Numero de Personas",main = "Metodo 1: Runge Kutta 4")
-    lines(times, simulacionM1SIR.sir$I, type="l", col="red")
-    lines(times, simulacionM1SIR.sir$R, type="l", col="green")
-    legend(x = "topright", legend=c("Susceptibles", "Infectados","Recuperados"), col=c("blue", "red","green"), lty=rep(1, 2,3))
+      N <- sum(init)
+      print(simulacionM1SIR.sir)
+      #Calculamos el tamanio de la poblacion
+      updateTextInput(session, "poblacionInicialSIR", value =N)
+      #Representamos graficamente los resultados obtenidos
+      plot(times, simulacionM1SIR.sir$S, type="l", col="blue", ylim=c(0,sum(init)), xlab="Tiempo (en dias)", ylab="Numero de Personas",main = "Metodo 1: Runge Kutta 4")
+      lines(times, simulacionM1SIR.sir$I, type="l", col="red")
+      lines(times, simulacionM1SIR.sir$R, type="l", col="green")
+      legend(x = "topright", legend=c("Susceptibles", "Infectados","Recuperados"), col=c("blue", "red","green"), lty=rep(1, 2,3))
       
     })
     
@@ -443,8 +443,8 @@ server <- function (input, output,session)
              #ecuaciones diferenciales   
              dS <- -beta*S*I + gamma*I
              dI <- beta*S*I - gamma*I
-               #resultados de las tasas de cambio    
-               return(list(c(dS, dI)))
+             #resultados de las tasas de cambio    
+             return(list(c(dS, dI)))
            })
     }
     #intervalo de tiempo y resolucion
@@ -529,7 +529,7 @@ server <- function (input, output,session)
     
     
   }
-
+  
   
   
   observeEvent(input$botonCalcularSI,{
