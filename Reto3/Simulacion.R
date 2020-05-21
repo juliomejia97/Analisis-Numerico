@@ -6,6 +6,9 @@ library (deSolve)
 library (phaseR)
 library (pracma)
 library(readr)
+#Los datos fueron extraídos y adaptados de la OMS 
+#Así mismo se extrajeron los datos de XLSTAT 
+#OMS Ref: https://www.kaggle.com/imdevskp/corona-virus-report
 Datos <- read_delim(file="Datos.csv", 
                     ";", escape_double = FALSE, locale = locale(decimal_mark = ",", 
                                                                 grouping_mark = "."), trim_ws = TRUE)
@@ -32,6 +35,11 @@ frow1 <- fluidRow(
   ,valueBoxOutput("value2")
   ,valueBoxOutput("value3")
 )
+#Para realizar el cálculo de betha y gamma de los modelos se realizó una suma de cuadrados
+#Estimando los parámetros por cada modelo.
+#Esto se siguó utilizando la guía y metodología presentada en:
+#Ref: https://rpubs.com/choisy/sir
+
 
 TabSI <- fluidRow( 
   
